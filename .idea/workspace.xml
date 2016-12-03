@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c68faaa6-80d4-43fe-96c0-0c3080410004" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/common/FTPCommand.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/client/FTPClient.java" afterPath="$PROJECT_DIR$/src/client/FTPClient.java" />
     </list>
     <ignored path="FTP.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -24,11 +24,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="FTPClient.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="FTPClient.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/client/FTPClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1498">
-              <caret line="15" column="37" lean-forward="true" selection-start-line="15" selection-start-column="37" selection-end-line="15" selection-end-column="37" />
+            <state relative-caret-position="223">
+              <caret line="173" column="72" lean-forward="true" selection-start-line="173" selection-start-column="72" selection-end-line="173" selection-end-column="72" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -36,11 +36,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FTPCommand.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="FTPCommand.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/common/FTPCommand.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="36" column="1" lean-forward="true" selection-start-line="36" selection-start-column="1" selection-end-line="36" selection-end-column="1" />
+            <state relative-caret-position="493">
+              <caret line="29" column="13" lean-forward="true" selection-start-line="29" selection-start-column="13" selection-end-line="29" selection-end-column="13" />
               <folding>
                 <element signature="e#211#212#0" expanded="true" />
                 <element signature="e#249#250#0" expanded="true" />
@@ -60,6 +60,11 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>out</find>
+    </findStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -76,9 +81,9 @@
         <option value="$PROJECT_DIR$/src/sandbox/Hello.java" />
         <option value="$PROJECT_DIR$/src/sandbox/Server.java" />
         <option value="$PROJECT_DIR$/src/sandbox/Client.java" />
-        <option value="$PROJECT_DIR$/src/client/FTPClient.java" />
         <option value="$PROJECT_DIR$/src/common/MessageToClientType.java" />
         <option value="$PROJECT_DIR$/src/common/FTPCommand.java" />
+        <option value="$PROJECT_DIR$/src/client/FTPClient.java" />
       </list>
     </option>
   </component>
@@ -342,7 +347,7 @@
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <option name="MAIN_CLASS_NAME" value="client.FTPClient" />
       <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="localhost 21" />
+      <option name="PROGRAM_PARAMETERS" value="localhost" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="ALTERNATIVE_JRE_PATH" value="C:\Program Files\Java\jdk1.8.0_112\jre" />
@@ -423,7 +428,14 @@
       <option name="project" value="LOCAL" />
       <updated>1480742568309</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="RBurbulis:  Adding initial FTPCommand enum.">
+      <created>1480781790165</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1480781790165</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -439,7 +451,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5567823" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24447949" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.10567823" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16325037" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -475,7 +487,8 @@
     <MESSAGE value="Commiting from IntelliJ" />
     <MESSAGE value="RBurbulis - FTPClient initial" />
     <MESSAGE value="Removing Hello.java" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removing Hello.java" />
+    <MESSAGE value="RBurbulis:  Adding initial FTPCommand enum." />
+    <option name="LAST_COMMIT_MESSAGE" value="RBurbulis:  Adding initial FTPCommand enum." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -558,25 +571,25 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/client/FTPClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1498">
-          <caret line="15" column="37" lean-forward="true" selection-start-line="15" selection-start-column="37" selection-end-line="15" selection-end-column="37" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/common/FTPCommand.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="36" column="1" lean-forward="true" selection-start-line="36" selection-start-column="1" selection-end-line="36" selection-end-column="1" />
+        <state relative-caret-position="493">
+          <caret line="29" column="13" lean-forward="true" selection-start-line="29" selection-start-column="13" selection-end-line="29" selection-end-column="13" />
           <folding>
             <element signature="e#211#212#0" expanded="true" />
             <element signature="e#249#250#0" expanded="true" />
             <element signature="e#287#288#0" expanded="true" />
             <element signature="e#317#318#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/client/FTPClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="223">
+          <caret line="173" column="72" lean-forward="true" selection-start-line="173" selection-start-column="72" selection-end-line="173" selection-end-column="72" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>

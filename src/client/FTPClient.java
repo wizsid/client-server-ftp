@@ -1,5 +1,7 @@
 package client;
 
+import common.FTPCommand;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -7,88 +9,106 @@ public class FTPClient
 {
     public static void main(final String[] args)
     {
-        if(args.length == 0)
+        if((args.length == 0) || (args.length > 2))
         {
-            System.err.println("Usage:  java FTPClient <FTP server host address> [FTP server port]");
+            System.out.println("Usage:  java FTPClient <FTP server host address> [FTP server port]");
+            System.out.flush();
         }
         else
         {
             final String fTPServerAddress = args[0];
-            int fTPServerControlPort = 21;
+            int fTPServerControlPort = -1;
 
-            if(args.length == 2)
+            if(args.length == 1)
+            {
+                fTPServerControlPort = 21;
+            }
+            else
             {
                 try
                 {
                     fTPServerControlPort = Integer.parseInt(args[1]);
+
+                    if(fTPServerControlPort < 0)
+                    {
+                        System.out.println("Usage:  FTP server port can not be negative");
+                        System.out.flush();
+                    }
                 }
                 catch(final NumberFormatException e)
                 {
-                    System.err.println("Usage:  FTP server port specified is not numeric");
+                    System.out.println("Usage:  FTP server port specified is not an integer");
+                    System.out.flush();
                 }
             }
 
-            Socket fTPServerControlSocket = null;
-            BufferedReader controlSocketInputStream = null;
-            PrintWriter controlSocketOutputStream = null;
-
-            try
+            if(fTPServerControlPort > 0)
             {
-                System.out.println("Connecting to FTP server " + fTPServerAddress + ":" + fTPServerControlPort + "...");
+                Socket fTPServerControlSocket = null;
+                BufferedReader controlSocketInputStream = null;
+                PrintWriter controlSocketOutputStream = null;
 
-                fTPServerControlSocket = new Socket(fTPServerAddress, fTPServerControlPort);
-                controlSocketInputStream = new BufferedReader(new InputStreamReader(fTPServerControlSocket.getInputStream()));
-                controlSocketOutputStream = new PrintWriter(fTPServerControlSocket.getOutputStream(), true);
-
-                final char[] incomingData = new char[1024];
-                final int numBytesRead = controlSocketInputStream.read(incomingData, 0, incomingData.length);
-
-                if(numBytesRead > 0)
+                try
                 {
-                    System.out.println("Welcome message:\n" + new String(incomingData, 0, numBytesRead));
+                    System.out.println("Connecting to FTP server " + fTPServerAddress + ":" + fTPServerControlPort + "...");
+                    System.out.flush();
 
-                    processUserCommands(controlSocketInputStream, controlSocketOutputStream);
-                }
-                else
-                {
-                    System.err.println("Connection to FTP server failed");
-                }
+                    fTPServerControlSocket = new Socket(fTPServerAddress, fTPServerControlPort);
+                    controlSocketInputStream = new BufferedReader(new InputStreamReader(fTPServerControlSocket.getInputStream()));
+                    controlSocketOutputStream = new PrintWriter(fTPServerControlSocket.getOutputStream(), true);
 
-                controlSocketInputStream.close();
-                controlSocketOutputStream.close();
-            }
-            catch(final IOException e)
-            {
-                e.printStackTrace();
-            }
-            finally
-            {
-                if(controlSocketInputStream != null)
-                {
-                    try
+                    final char[] incomingData = new char[1024];
+                    final int numBytesRead = controlSocketInputStream.read(incomingData, 0, incomingData.length);
+
+                    if(numBytesRead > 0)
                     {
-                        controlSocketInputStream.close();
-                    }
-                    catch (final IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
+                        System.out.println("Welcome message:\n" + new String(incomingData, 0, numBytesRead));
+                        System.out.flush();
 
-                if(controlSocketOutputStream != null)
-                {
+                        processUserCommands(controlSocketInputStream, controlSocketOutputStream);
+                    }
+                    else
+                    {
+                        System.out.println("Connection to FTP server failed");
+                        System.out.flush();
+                    }
+
+                    controlSocketInputStream.close();
                     controlSocketOutputStream.close();
                 }
-
-                if(fTPServerControlSocket != null)
+                catch(final IOException e)
                 {
-                    try
+                    e.printStackTrace();
+                }
+                finally
+                {
+                    if(controlSocketInputStream != null)
                     {
-                        fTPServerControlSocket.close();
+                        try
+                        {
+                            controlSocketInputStream.close();
+                        }
+                        catch(final IOException e)
+                        {
+                            e.printStackTrace();
+                        }
                     }
-                    catch (final IOException e)
+
+                    if(controlSocketOutputStream != null)
                     {
-                        e.printStackTrace();
+                        controlSocketOutputStream.close();
+                    }
+
+                    if(fTPServerControlSocket != null)
+                    {
+                        try
+                        {
+                            fTPServerControlSocket.close();
+                        }
+                        catch(final IOException e)
+                        {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -99,36 +119,67 @@ public class FTPClient
     {
        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 
-       String command = null;
+       String userInput;
+       boolean done = false;
 
        do
        {
            System.out.print("FTP command:  ");
+           System.out.flush();
+
+           userInput = null;
 
            try
            {
-               command = stdIn.readLine();
+               userInput = stdIn.readLine();
            }
            catch (final IOException e)
            {
                e.printStackTrace();
            }
 
-           processUserCommand(command, controlSocketInputStream, controlSocketOutputStream);
-       }while((command != null) && !command.equalsIgnoreCase("QUIT") && !command.equalsIgnoreCase("BYE"));
+           if(userInput != null)
+           {
+               done = processUserCommand(userInput, controlSocketInputStream, controlSocketOutputStream);
+           }
+       }while(!done);
     }
 
-    private static void processUserCommand(final String command, final BufferedReader controlSocketInputStream, final PrintWriter controlSocketOutputStream)
+    private static boolean processUserCommand(final String userInput, final BufferedReader controlSocketInputStream, final PrintWriter controlSocketOutputStream)
     {
-        controlSocketOutputStream.println(command);
+        boolean done = false;
+        FTPCommand fTPCommand = null;
 
         try
         {
-            System.out.println(controlSocketInputStream.readLine());
+            fTPCommand = FTPCommand.fromString(userInput.split(" ")[0]);
         }
-        catch (final IOException e)
+        catch(final IllegalArgumentException e)
         {
-            e.printStackTrace();
+            System.out.println("Illegal or unsupported FTP command.");
+            System.out.flush();
         }
+
+        if(fTPCommand != null)
+        {
+            if(fTPCommand.equals(FTPCommand.QUIT))
+            {
+                done = true;
+            }
+
+            controlSocketOutputStream.println(userInput);
+
+            try
+            {
+                System.out.println(controlSocketInputStream.readLine());
+                System.out.flush();
+            }
+            catch (final IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        return done;
     }
 }
