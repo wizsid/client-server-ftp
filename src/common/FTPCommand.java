@@ -3,35 +3,39 @@ package common;
 /**
  * Enumerates FTP commands
  */
-
 public enum FTPCommand
 {
-    USER("USER"),
-    PASS("PASS"),
-    QUIT("QUIT");
+    CWD,
+    DELE,
+    EPSV,
+    LIST,
+    MDTM,
+    MKD,
+    MLSD,
+    NLST,
+    NOOP,
+    PASS,
+    PWD,
+    QUIT,
+    RETR,
+    RMD,
+    RNFR,
+    RNTO,
+    SIZE,
+    STOR,
+    TYPE,
+    USER;
 
-    private String command;
-
-    private FTPCommand(final String command)
-    {
-        this.command = command;
-    }
-
-    public String getCommand()
-    {
-        return command;
-    }
-
-    public static FTPCommand fromString(final String command)
+    public static FTPCommand fromUserInput(final String userInput)
     {
         for(final FTPCommand fTPCommand : FTPCommand.values())
         {
-            if(fTPCommand.command.equals(command))
+            if(userInput.startsWith(fTPCommand.name()))
             {
                 return fTPCommand;
             }
         }
 
-        throw new IllegalArgumentException("Command " + command + " can not be casted into an FTPCommand");
+        throw new IllegalArgumentException("User input " + userInput + " can not be casted into an FTPCommand");
     }
 }
