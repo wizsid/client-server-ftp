@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 
 /**
- * Created by Sid on 12/4/16.
+ * FTP Server Implementation.
  */
 public class FTPServer {
 
