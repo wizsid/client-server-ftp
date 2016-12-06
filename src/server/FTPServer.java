@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 
 
 /**
@@ -95,6 +96,23 @@ class FTPSession implements Runnable {
         }
         else {
             out.println("550 File not found");
+        }
+    }
+
+    void createDir(String dirName) {
+//        String[] args;
+//        String dirName = "";
+//        for (int i = 1; i < args.length(); i++) {
+//            dirName += dirName + args[i];
+//        }
+        String path = currDir + fileSep + dirName;
+        File folder = new File(path);
+        if(!folder.exists()){
+            folder.mkdir();
+            out.println("257 Directory created");
+        }
+        else {
+            out.println("550 Directory not created");
         }
     }
 
@@ -191,14 +209,14 @@ class FTPSession implements Runnable {
             case "CWD":
                     System.out.println(currDir);
                     if (root.equals(args[1])) {
-                        System.out.println("testtest");
+//                        System.out.println("testtest");
                         currDir = args[1];
                         out.println("257 " + '"' + currDir + '"' + " is current directory.");
                     } else {
-                        System.out.println("test");
+//                        System.out.println("test");
                         String cur = currDir;
-                        System.out.println("this is cur " + cur);
-                        System.out.println("this is args " + args[1]);
+//                        System.out.println("this is cur " + cur);
+//                        System.out.println("this is args " + args[1]);
                         currDir = cur + fileSep + args[1];
                         out.println("257 " + '"' + currDir + '"' + " is current directory.");
                     }
@@ -252,6 +270,7 @@ class FTPSession implements Runnable {
                 break;
 
             case "MKD":
+                createDir(args[1]);
                 break;
 
             default:
