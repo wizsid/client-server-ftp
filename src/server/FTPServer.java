@@ -1,12 +1,10 @@
 package server;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.ByteBuffer;
+
 
 /**
  * Created by Sid on 12/4/16.
@@ -16,15 +14,28 @@ public class FTPServer {
     static int port;
     ServerSocket sock;
 
+    String setSharedFolder() {
+        String pwd = System.getProperty("user.dir");
+        String path = pwd+"/shared";
+        File folder = new File(path);
+        if (!folder.exists()) {
+            if (folder.mkdir()) {
+                System.out.println("Successfully created shared folder");
+            } else {
+                System.out.println("Failed to create directory!");
+            }
+        }
+        return path;
+    }
+
     public static void main(String[] args) {
 
         FTPServer obj = new FTPServer();
 
         obj.port = Integer.parseInt(args[0]);
-
+        String rootDir = obj.setSharedFolder();
         try {
             obj.sock = new ServerSocket(port);
-
             System.out.println("Server Address : " + InetAddress.getLocalHost().getHostAddress());
             System.out.println("Server started on port " + port);
 
@@ -32,7 +43,7 @@ public class FTPServer {
                 System.out.println("Waiting for Connection...");
                 Socket soc = obj.sock.accept();
                 System.out.println("Incoming connection from " + soc.getRemoteSocketAddress());
-                FTPSession fobj = new FTPSession(soc);
+                FTPSession fobj = new FTPSession(soc, rootDir);
                 Thread t = new Thread(fobj);
                 t.start();
             }
@@ -47,8 +58,9 @@ public class FTPServer {
 class FTPSession implements Runnable {
 
     // Path information
-    private String root = "/Users/Sid/Workspace/CourseCode/651-Networking/FTP/shared";
-    private String currDir = root;
+//    private String root = "/Users/Sid/Workspace/CourseCode/651-Networking/FTP/shared";
+    private String root;
+    private String currDir;
     private String fileSep = System.getProperty("file.separator");
 
     // Command Connection
@@ -62,15 +74,47 @@ class FTPSession implements Runnable {
     private InputStream dataIn;
 
 
-    FTPSession(Socket soc) {
+    FTPSession(Socket soc, String pwd) {
         this.cSock = soc;
+        this.root = pwd;
+        this.currDir = root;
+//        this.currDir = root;
+        System.out.println("This is root = " + root);
+        System.out.println("This is currDir = " + currDir);
     }
 
-    void deleteFile() {}
+    void deleteFile(String fileName) throws IOException {
 
-    void deleteDir() {}
+        String path = currDir + fileSep + fileName;
+        System.out.println(path);
+        File file = new File(path);
+        if (file.exists()) {
+            if(file.delete()) {
+                out.println("250 File deleted successfully");
+            }
+        }
+        else {
+            out.println("550 File not found");
+        }
+    }
 
-
+    void deleteDir(String folder) {
+        String path = currDir + fileSep + folder;
+        File file = new File(path);
+        if( file.isDirectory() ) {
+            if(file.list().length>0){
+                out.println("550 Directory not empty.");
+            }
+            else {
+                if(file.delete()) {
+                    out.println("250 Folder deleted successfully.");
+                }
+            }
+        }
+        else {
+            System.out.println("Error");
+        }
+    }
 
     void receiveFile(String fileName) throws IOException {
         String filePath = currDir+ fileSep + fileName;
@@ -89,32 +133,46 @@ class FTPSession implements Runnable {
 
         String filePath = currDir + fileSep + fileName;
         File file = new File(filePath);
-        System.out.println(file.getAbsolutePath());
-        RandomAccessFile reader = new RandomAccessFile(file, "rw");
-        byte[] fileBytes = new byte[1024];
-//        System.out.println(file.getAbsolutePath());
-        while (reader.getFilePointer() < reader.length()) {
-            dataOut.write(fileBytes, 0, reader.read(fileBytes));
+        if (file.isDirectory()) {
+            currDir = filePath;
+
         }
+        else {
+            System.out.println(file.getAbsolutePath());
+            RandomAccessFile reader = new RandomAccessFile(file, "rw");
+            byte[] fileBytes = new byte[1024];
+//        System.out.println(file.getAbsolutePath());
+            while (reader.getFilePointer() < reader.length()) {
+                dataOut.write(fileBytes, 0, reader.read(fileBytes));
+            }
+        }
+
+
+
         dataOut.flush();
         dataOut.close();
     }
 
     void sendFileList() throws IOException {
-//        String test = "-rwxr-xr-x 1 100 100 14757 a.out\r\n";
-//        dataOut.write(test.getBytes());
-//        dataOut.flush();
-//        dataOut.close();
-        File folder = new File(currDir);
-        File[] listOfFiles = folder.listFiles();
+        String cmd = "ls -l";
         String listing = "";
-        for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].isFile()) {
-                listing = listing + (listOfFiles[i].getName()+"\r\n");
-            } else if (listOfFiles[i].isDirectory()) {
-                listing = listing + (listOfFiles[i].getName()+"\r\n");
+        try
+        {
+            Process p = Runtime.getRuntime().exec(cmd, null, new File(currDir));
+            //Process p=Runtime.getRuntime().exec("ls -l");
+
+            p.waitFor();
+            BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line=reader.readLine();
+            while(line!=null)
+            {
+                listing = listing + line + "\r\n";
+                line=reader.readLine();
             }
+
         }
+        catch(IOException e1) {}
+        catch(InterruptedException e2) {}
         dataOut.write(listing.getBytes());
         dataOut.flush();
         dataOut.close();
@@ -127,13 +185,26 @@ class FTPSession implements Runnable {
         switch (args[0]) {
 
             case "PWD":
-                out.println("257 "+'"' +root+'"'+" is current directory.");
+                out.println("257 "+'"'+ currDir +'"'+" is current directory.");
                 break;
 
             case "CWD":
-                System.out.println(args[1]);
-                currDir = args[1];
-                out.println("257 "+'"' +currDir+'"'+" is current directory.");
+                    System.out.println(currDir);
+                    if (root.equals(args[1])) {
+                        System.out.println("testtest");
+                        currDir = args[1];
+                        out.println("257 " + '"' + currDir + '"' + " is current directory.");
+                    } else {
+                        System.out.println("test");
+                        String cur = currDir;
+                        System.out.println("this is cur " + cur);
+                        System.out.println("this is args " + args[1]);
+                        currDir = cur + fileSep + args[1];
+                        out.println("257 " + '"' + currDir + '"' + " is current directory.");
+                    }
+//                out.println("257 "+'"' + root + fileSep +currDir +'"'+" is current directory.");
+
+//                    out.println("550 No such directory.");
                 break;
 
             case "TYPE":
@@ -149,7 +220,6 @@ class FTPSession implements Runnable {
                 ServerSocket s = new ServerSocket(0);
                 out.println("229 Entering Extended Passive Mode (|||"+ s.getLocalPort() +"|)");
                 dataSock = s.accept();
-//                System.out.println("test");
                 break;
 
             case "LIST":
@@ -173,7 +243,12 @@ class FTPSession implements Runnable {
                 out.println("226 transfer of " + args[1] + " complete");
                 break;
 
+            case "DELE":
+                deleteFile(args[1]);
+                break;
+
             case "RMD":
+                deleteDir(args[1]);
                 break;
 
             case "MKD":
@@ -186,12 +261,13 @@ class FTPSession implements Runnable {
     }
 
     public void run() {
-        BufferedReader in = null;
-        PrintWriter out = null;
-
+        //BufferedReader in = null;
+        //PrintWriter out = null;
+        this.in = null;
+        this.out = null;
         try {
-            in = new BufferedReader(new InputStreamReader(cSock.getInputStream()));
-            out = new PrintWriter(cSock.getOutputStream(),true);
+            this.in = new BufferedReader(new InputStreamReader(cSock.getInputStream()));
+            this.out = new PrintWriter(cSock.getOutputStream(),true);
             String clientCmd = null;
             out.flush();
             out.println("220 Localhost Connected\r\n");
@@ -220,7 +296,6 @@ class FTPSession implements Runnable {
                     else{
                         cmdProcessor(clientCmd, out);
                     }
-
                 }
             }
         }
@@ -228,6 +303,7 @@ class FTPSession implements Runnable {
             e.printStackTrace();
         }
         finally{
+            currDir = "";
             try {
                 if (in != null)
                     in.close();
