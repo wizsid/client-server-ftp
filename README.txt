@@ -30,3 +30,27 @@ FTP Server :
 
 
 FTP Client :
+    Usage:  java FTPClient <local directory> <FTP server adderss> [FTP server
+     port]
+
+     Supported commands:
+     CWD - change working directory to the argument specified
+     DELE - delete specified file
+     ESPV - enter passive mode
+     LIST - list the contents of the current working directory
+     MDTM - returns the last modified time for the specified file
+     MKD - creates specified directory
+     MLSD - list the contents of the current working directory
+     NLST - name list of the contents of the current working directory
+     NOOP - no operation
+     PASS - send password of the user
+     PWD - gets present working directory
+     QUIT - disconnects from the FTP server
+     RETR - downloads specified file into the local directory
+     RMD - deletes specified directory
+     RNFR - rename from
+     RNTO - rename to
+     SIZE - returns the size of the specified file or directory
+     STOR - uploads specified file
+     TYPE - sets the mode of the file transfer (i.e. I = binary, A = ASCII)
+     USER - send username
