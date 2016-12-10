@@ -1,8 +1,8 @@
 FTP Client & Server Implementation
-
+-------------------------------------------------------
 Authors : Rolandas Burbulis, Siddharth Subramanian
 Course  : 651- Foundations of Computer Netwroks
--------------------------------------------------------
+
 
 FTP Server :
     This file contains the implementation of the FTP server which can connect
